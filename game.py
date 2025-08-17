@@ -68,3 +68,32 @@ def play_round(round_index, cfg):
     pause("\nRound complete! Press Enter to continue...")
     return {"score": score, "wpm": wpm, "accuracy": accuracy, "best_streak": best_streak, "mistakes": mistakes, "correct_words": correct_words}
 
+def rank_from_score(total_score, avg_wpm, avg_accuracy):
+    points = 0
+    if total_score >= 300: points += 2
+    elif total_score >= 200: points += 1
+    if avg_wpm >= 45: points += 2
+    elif avg_wpm >= 30: points += 1
+    if avg_accuracy >= 92: points += 2
+    elif avg_accuracy >= 80: points += 1
+    ranks = ["Novice", "Trainee", "Typist", "Speedster", "Blazer", "Keyboard Ninja", "Typing Legend"]
+    return ranks[clamp(points, 0, 6)]
+
+def play_game(cfg):
+    stats = []
+    for i in range(ROUNDS):
+        s = play_round(i, cfg)
+        stats.append(s)
+
+    total_score = sum(s["score"] for s in stats)
+    avg_wpm = sum(s["wpm"] for s in stats) / len(stats)
+    avg_accuracy = sum(s["accuracy"] for s in stats) / len(stats)
+    rank = rank_from_score(total_score, avg_wpm, avg_accuracy)
+
+    clear()
+    print(colorize("FINAL RESULTS", C.B + C.M))
+    print(f"Score: {total_score}")
+    print(f"Avg WPM: {avg_wpm:.1f}")
+    print(f"Avg Accuracy: {avg_accuracy:.1f}%")
+    print(f"Rank: {colorize(rank, C.C)}")
+    pause()

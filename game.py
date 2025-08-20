@@ -1,7 +1,52 @@
 from utils import clear, pause, clamp, now, colorize, C, pick_word
 import random
+import time
 
 ROUNDS = 5
+
+def cinematic(rank, time_taken, accuracy):
+    clear()
+
+    banner = [
+        "*"*50,
+        "             LEVEL COMPLETE! ✅",
+        "*"*50
+    ]
+
+    for line in banner:
+        print(colorize(line, C.Y))
+        time.sleep(0.5)
+    print()
+
+    for i in range(3):
+        print(colorize("             LEVEL COMPLETE! ✅", C.G), end="\r", flush=True)
+        time.sleep(0.5)
+        print(" " * 50, end="\r", flush=True)  
+        time.sleep(0.3)
+    print(colorize("             LEVEL COMPLETE! ✅", C.G))
+    print()
+
+    stats = [
+        f"Final Time: {time_taken:.2f} seconds ⏱️",
+        f"Accuracy: {accuracy:.2f}% 🎯",
+        f"Rank Achieved: {rank}\n"
+    ]
+    for line in stats:
+        for ch in line:
+            print(ch, end="", flush=True)
+            time.sleep(0.02)
+        print()
+        time.sleep(0.5)
+
+    outro = "You conquered the typing challenge... well done!"
+    for ch in outro:
+        print(ch, end="", flush=True)
+        time.sleep(0.04)
+    print("\n")
+
+    print(colorize("*"*50, C.Y))
+    time.sleep(2)
+
 
 DIFFICULTIES = {
     "easy":    {"round_seconds": 30, "min_len": 3, "max_len": 7,  "speed_step": -2, "name": "Easy"},
@@ -90,10 +135,4 @@ def play_game(cfg):
     avg_accuracy = sum(s["accuracy"] for s in stats) / len(stats)
     rank = rank_from_score(total_score, avg_wpm, avg_accuracy)
 
-    clear()
-    print(colorize("FINAL RESULTS", C.B + C.M))
-    print(f"Score: {total_score}")
-    print(f"Avg WPM: {avg_wpm:.1f}")
-    print(f"Avg Accuracy: {avg_accuracy:.1f}%")
-    print(f"Rank: {colorize(rank, C.C)}")
-    pause()
+    cinematic(rank, avg_wpm, avg_accuracy)
